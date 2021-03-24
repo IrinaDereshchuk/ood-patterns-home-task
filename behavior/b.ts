@@ -48,35 +48,39 @@ class SquareRoot implements OperationCommand {
   }
 }
 
-const operationMap = new Map<string, ({ new(specialMath: SpecialMath): OperationCommand })>();
-operationMap
-  .set('square', SquareCommand)
-  .set('cube', CubeCommand)
-  .set('squareRoot', SquareRoot);
+enum CommandType {
+  Cube = 'cube',
+  Square = 'square',
+  SquareRoot = 'squareRoot'
+}
 
   interface Command {
-    execute(operation: string): void;
+    cube(): void;
+    square(): void;
+    squareRoot(): void;
   }
   
   class CalculationsCommand implements Command {
-    public commandsExecuted: string[] = [];
+    public commandsExecuted: CommandType[] = []; // use enum to avoid magic strings
   
     constructor(private specialMath: SpecialMath) {}
-  
-    public execute(operationName: string): void {
-        const operation = operationMap.get(operationName);
-  
-        if (operation) {
-            new operation(this.specialMath);
-            this.trackCommandExecution(operationName);
-  
-            return;
-        }
-  
-        throw new Error('Operation is not exist');
+
+    cube(): void {
+      new CubeCommand(this.specialMath);
+      this.trackCommandExecution(CommandType.Cube);
+    }
+
+    square(): void {
+      new SquareCommand(this.specialMath);
+      this.trackCommandExecution(CommandType.Square);
+    }
+
+    squareRoot(): void {
+      new SquareRoot(this.specialMath);
+      this.trackCommandExecution(CommandType.SquareRoot);
     }
   
-    private trackCommandExecution(commandName: string): void {
+    private trackCommandExecution(commandName: CommandType): void {
         this.commandsExecuted.push(commandName);
     }
   }
@@ -84,9 +88,12 @@ operationMap
 export class BehaviorBClient {
   public static main(): void {
     const command = new CalculationsCommand(new SpecialMath(5));
-    command.execute('cube');
-    command.execute('squareRoot');
-    command.execute('square');
+    // to make the client able to avoid extra information about command
+    // I would like to get rid of magic strings in favor of using separate methods for different math operations
+    // also separate methods are more understandable and readable
+    command.cube(); 
+    command.square();
+    command.squareRoot();
 
     console.log(command.commandsExecuted);
   }

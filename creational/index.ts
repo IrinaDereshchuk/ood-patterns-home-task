@@ -16,11 +16,13 @@ interface IPerson {
 class Person implements IPerson {
   protected static instance: Person = null;
 
-  constructor(public name: string) {}
+  protected constructor(public name: string) {}
 
   public static getInstance(name: string = 'unnamed person'): Person {
       if (!this.instance) {
           this.instance = new this(name);
+      } else {
+          console.log('Person is already created.');
       }
 
       return this.instance;
@@ -31,7 +33,7 @@ class Shopper extends Person implements IPerson {
   public employed: boolean;
   protected static instance: Shopper = null;
 
-  constructor(name: string, public money: number) {
+  protected constructor(name: string, public money: number) {
       super(name);
       this.employed = false;
   }
@@ -39,6 +41,8 @@ class Shopper extends Person implements IPerson {
   public static getInstance(name: string, money: number = 0): Shopper {
       if (!Shopper.instance) {
           Shopper.instance = new Shopper(name, money);
+      } else {
+          console.log('Shopper is already created.');
       }
 
       return Shopper.instance;
@@ -49,7 +53,7 @@ class Employee extends Shopper implements IPerson {
   public employed: boolean;
   protected static instance: Employee = null;
 
-  constructor(name: string, money: number, public employer: string) {
+  protected constructor(name: string, money: number, public employer: string) {
       super(name, money);
       this.employed = true;
   }
@@ -57,6 +61,8 @@ class Employee extends Shopper implements IPerson {
   public static getInstance(name: string, money: number = 0, employer: string = ''): Employee {
       if (!Employee.instance) {
           Employee.instance = new Employee(name, money, employer);
+      } else {
+          console.log('Employee is already created.');
       }
 
       return Employee.instance;
